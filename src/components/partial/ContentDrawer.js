@@ -41,7 +41,7 @@ function ContentDrawer({navigation, route}){
         'Deseja mesmo sair?',
         [
           {
-            text: 'NÂO',
+            text: 'NÃO',
             onPress: () => navigation.closeDrawer(),
             style: 'cancel',
           },
@@ -73,7 +73,9 @@ function ContentDrawer({navigation, route}){
     }
 
     function handleNewAlert(){      
-      navigation.navigate('FormAlerta')
+      navigation.navigate('FormAlerta', {
+        edit: false
+      })
     }
 
     function handleEditPerfil(){      

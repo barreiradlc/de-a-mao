@@ -9,9 +9,17 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import api from '../services/api'
 import { LoadingOverlay } from '../components/utils/Utils'
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import { NavigationContainer, useNavigation, useRoute } from '@react-navigation/native';
 
 function Mapa() {
+
+  const route = useRoute()
+
+  const RouteParams = route.params
+
+  console.log({route})
+
+  // const { refresh } = route.params
 
   const iconsize = 50
   
@@ -47,6 +55,14 @@ function Mapa() {
   React.useEffect(() => {
     init()
   }, [])
+  
+  React.useEffect(() => {
+    if(RouteParams){
+      if(RouteParams.refresh){
+        getAlerts()
+      }
+    }
+  }, [RouteParams])
   
   React.useEffect(() => {
     if(position){

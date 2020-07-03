@@ -42,6 +42,7 @@ function Routes(props) {
     return null
   }
   
+  console.debug('{user}')
   console.debug({user})
   
   const homePage = user !== null ? "Mapa" : "Login"

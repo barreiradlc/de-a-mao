@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, StyleSheet, Text, Image, TouchableOpacity, SafeAreaView, Linking } from 'react-native';
+import { Alert, View, StyleSheet, Text, Image, TouchableOpacity, SafeAreaView, Linking } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/Feather';
@@ -26,10 +26,10 @@ function Detalhes({ route, navigation }) {
         getUser()
     }, [])
 
-    async function getUser(){
+    async function getUser() {
         const u = await AsyncStorage.getItem("@user")
 
-        console.log({u})
+        console.log({ u })
 
         setUser(JSON.parse(u))
     }
@@ -48,13 +48,50 @@ function Detalhes({ route, navigation }) {
         console.log("AI! AI! Faz cosca")
     }
 
+    function handleEdit(){
+        navigation.navigate('FormAlerta', {
+            edit: true,
+            data
+        })
+    }
+
+    function handeDeleteAlert(){
+        api.delete(`alert/${route.params._id}`).then(response => {
+            setData(response.data);
+            if(response.data){
+                return navigation.navigate('Mapa', { refresh: true })                
+            } else {
+                return;
+            }
+            
+        });
+    }
+
+    function handleDelete() {
+        Alert.alert(
+            'Aviso',
+            'Deseja realmente remover?',
+            [
+                {
+                    text: 'NÂO',
+                    onPress: () => console.log('Nada a fazer'),
+                    style: 'cancel',
+                },
+                {
+                    text: 'SIM', onPress: () => handeDeleteAlert()
+                },
+            ],
+            { cancelable: true }            
+        )
+    }
+
     function handleWhatsapp() {
         Linking.openURL(`whatsapp://send?phone=${data.user.phone}&text=Olá tenho interesse em ajudar, te encontrei pelo anúncio: ${data.title}`);
-      }
-    
-      function handleComposeMail() {        
-        Linking.openURL(`mailto:${data.user.email}?subject=Contato pelo email&body=Olá tenho interesse em ajudar, te encontrei pelo anúncio: ${data.title}`) 
-      }
+    }
+
+    function handleComposeMail() {
+        Linking.openURL(`mailto:${data.user.email}?subject=Contato pelo email&body=Olá tenho interesse em ajudar, te encontrei pelo anúncio: ${data.title}`)
+    }
 
     if (loading) {
         return null
@@ -76,16 +113,16 @@ function Detalhes({ route, navigation }) {
                     )}
                 </View>
 
-                {data.user._id === user._id ? 
+                {data.user._id === user._id ?
                     <View style={styles.footer}>
-                        <RectButton style={styles.button} onPress={handleWhatsapp}>
+                        <RectButton style={styles.button} onPress={handleEdit}>
                             <FontAwesome name="edit" size={20} color="#FFF" />
                             <Text style={styles.buttonText}>Editar</Text>
                         </RectButton>
 
-                        <RectButton style={styles.button} onPress={handleComposeMail}>
-                            <Icon name="trash" size={20} color="#FFF" />
-                            <Text style={styles.buttonText}>Excluir</Text>
+                        <RectButton style={styles.button} onPress={handleDelete}>
+                            <Icon name="trash" size={25} color="#FFF" />
+                            <Text style={styles.buttonText}>Remover </Text>
                         </RectButton>
                     </View>
                     :
@@ -119,7 +156,7 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
         borderRadius: 10,
         marginTop: 32,
-    },    
+    },
     pointName: {
         color: '#322153',
         fontSize: 20,
@@ -153,10 +190,10 @@ const styles = StyleSheet.create({
     },
 
     footer: {
-        
+
         borderColor: '#999',
         paddingVertical: 30,
-        
+
         flexDirection: 'row',
         justifyContent: 'space-evenly'
     },

@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useRef } from 'react';
-import { Button, TextInput, View } from 'react-native';
+import { Alert, Button, TextInput, View } from 'react-native';
 import { FormContainer, FormInput, FormButtonGroup, FormButton, FormButtonLabel } from '../components/styled/Form';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import api from '../services/api'
@@ -14,24 +14,43 @@ function Home({ navigation }) {
     const [user, setUser] = useState('')
     const [showOverlay, setShowOverlay] = useState(false)
     
+    function handleCadastro(){
+                
+        const validEmail = mailValidate(user)
+        if(validEmail){
+            return navigation.navigate('Cadastro', {email: user})
+        }
+        return navigation.navigate('Cadastro', {username: user})                
+    }
+
     function handeLogin() {
         if(user === ''){
            return ref_input.current.focus()
         } 
-        setShowOverlay(true)
 
+        
+        setShowOverlay(true)
+        
         api.post('auth', {email: user.trim().toLowerCase()}).then(res => {
             
             const {data} = res
+            console.debug({data})
             setShowOverlay(false)
             
             if(!data._id){
-                console.log('Não cadastrado')
-                const validEmail = mailValidate(user)
-                if(validEmail){
-                    return navigation.navigate('Cadastro', {email: user})
-                }
-                return navigation.navigate('Cadastro', {username: user})                
+                return Alert.alert(
+                    'Usuário ou senha não encontrados!', 
+                    "Gostaria de se cadastrar?",
+                    [
+                        {
+                            text: 'NÃO',
+                            onPress: () => ref_input.current.focus(),
+                            style: 'cancel',
+                        },
+                        {text: 'SIM', onPress: () => handleCadastro()}
+                    ],
+                    {cancelable: false},
+                );                                
             }
 
             handleSaveUser(data)
@@ -42,9 +61,12 @@ function Home({ navigation }) {
         
     }
 
-    async function handleSaveUser(value) {
+    async function handleSaveUser(value) {        
         try {
           await AsyncStorage.setItem('@user', JSON.stringify(value))
+
+            console.log(value)
+
         } catch (e) {
         console.error(`Não foi possível salvar as preferências do usuário: ${e}`)
           // saving error

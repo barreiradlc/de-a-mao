@@ -106,8 +106,8 @@ function Cadastro({ navigation, route }) {
                                     return;
                                 }
             
-                                handleSaveUser(data)
-                                navigation.navigate('Mapa')        
+                                handleSaveUser(data.user)
+                                navigation.navigate('Mapa', true)        
                             })
                         
                 })

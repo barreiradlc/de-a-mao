@@ -11,6 +11,8 @@ import Geolocation from '@react-native-community/geolocation';
 
 function FormAlerta({ navigation, route }) {
 
+
+
     const iconsize = 50
 
     const ALL_NEEDS = [
@@ -32,12 +34,13 @@ function FormAlerta({ navigation, route }) {
     }
 
 
+    const [edit, setEdit] = React.useState(route.params.edit)
     function handleOpenDrawer() {
         navigation.openDrawer()
     }
 
     navigation.setOptions({
-        title: "Novo alerta",
+        title: `${edit ? 'Editar' : 'Novo'} alerta`,
         headerLeft: () => null,
         headerRight: () => (
             <TouchableOpacity style={{ paddingHorizontal: 20 }}
@@ -109,12 +112,12 @@ function FormAlerta({ navigation, route }) {
 
     const [user, setUser] = useState(INITIAL_VALUES)
     const [needSelected, setNeedSelected] = React.useState([])
-    const [position, setPosition] = React.useState()    
+    const [position, setPosition] = React.useState()
     const [error, setError] = useState([])
     const [showOverlay, setShowOverlay] = useState(false)
 
     useEffect(() => {
-        Geolocation.getCurrentPosition(info => {setPosition(info.coords)});
+        Geolocation.getCurrentPosition(info => { setPosition(info.coords) });
         // if (__DEV__) {
         //     setUser({
         //         username: "Barreiro",
@@ -126,24 +129,25 @@ function FormAlerta({ navigation, route }) {
 
     }, [])
 
+    useEffect(() => {
+        if(route.params){
+            const { data } = route.params
+            if(data){
+                setUser(data)
+                setNeedSelected(data.needs)
+                
+            }
+        }
+    }, [route.params])
+
     async function handeSubmit() {
         const u = await AsyncStorage.getItem("@user")
         const user_id = JSON.parse(u)
 
-        console.log({user_id})
-        
-
-        // if (!user.title) {
-        //     return Alert.alert('Erro', "É necessário preencher o título e para continuar")
-        // }
-        // if (!user.description) {
-        //     return Alert.alert('Erro', "É necessário preencher a descrição e para continuar")
-        // }
-        // if (needSelected.length === 0) {
-        //     return Alert.alert('Erro', "É necessário preencher ao menos uma necessidade para continuar")
-        // }
+        console.log({ user_id })
 
         let data = {
+            _id: user._id && user._id,
             title: user.title,
             description: user.description,
             needs: needSelected,
@@ -156,34 +160,33 @@ function FormAlerta({ navigation, route }) {
 
         setShowOverlay(true)
 
-        
-
-                api.post('alerts', data , {
-                    headers: {
-                        user_id: user_id._id
-                    }
-                }).then(res => {
-                    console.log('res.data')
-                    console.log(res.data)
-                    if(res.data){
-                        return navigation.navigate('Mapa')
-                    }
-                    Alert.alert('Erro', "Houve algum erro ao cadastrar o alerta")
-                })
-        //             const { data } = res
-
-        //             console.debug({ data })
-
-        //             if (!data.user._id) {
-        //                 Alert.alert('Erro', "Houve algum erro ao cadastrar seu usuário")
-        //                 console.log('Não cadastrado')
-        //                 return;
-        //             }
-
-        //             handleSaveUser(data)
-        //         })
-        //     })
-
+        if (edit) {
+            api.put('alerts', data, {
+                headers: {
+                    user_id: user_id._id
+                }
+            }).then(res => {
+                console.log('res.data')
+                console.log(res.data)
+                if (res.data) {
+                    return navigation.navigate('Mapa', { refresh: true })
+                }
+                Alert.alert('Erro', "Houve algum erro ao cadastrar o alerta")
+            })
+        } else {
+            api.post('alerts', data, {
+                headers: {
+                    user_id: user_id._id
+                }
+            }).then(res => {
+                console.log('res.data')
+                console.log(res.data)
+                if (res.data) {
+                    return navigation.navigate('Mapa', { refresh: true })                
+                }
+                Alert.alert('Erro', "Houve algum erro ao cadastrar o alerta")
+            })
+        }
 
         setShowOverlay(false)
     }
@@ -264,8 +267,8 @@ function FormAlerta({ navigation, route }) {
 
             <FormInput
                 autoFocus
-                
-                
+
+
                 onChange={(e) => handleChangeInput(e, 'title')}
                 placeholder='Titulo'
                 value={user.title}
@@ -273,17 +276,17 @@ function FormAlerta({ navigation, route }) {
             />
 
             <FormInput
-                
+
                 onChange={(e) => handleChangeInput(e, 'description')}
                 placeholder='Descrição'
                 multiline
                 numberOfLines={4}
                 value={user.description}
                 ref={ref_input}
-                // onSubmitEditing={() => { ref_input2.current.focus() }}
+            // onSubmitEditing={() => { ref_input2.current.focus() }}
             />
 
-            <Text style={{ padding: 0 ,marginTop: 20, fontSize: 20 }}>Preciso de:</Text>
+            <Text style={{ padding: 0, marginTop: 20, fontSize: 20 }}>Preciso de:</Text>
 
             <View style={styles.itemsContainer}>
                 <ScrollView
@@ -336,106 +339,106 @@ const styles = StyleSheet.create({
         fontSize: 20,    // fontFamily: 'Ubuntu_700Bold',
         marginTop: 24,
         color: '#555',
-      },
-      description: {
+    },
+    description: {
         color: '#6C6C80',
         fontSize: 16,
         marginTop: 4,
         // fontFamily: 'Roboto_400Regular',
-      },
-      mapContainer: {
+    },
+    mapContainer: {
         flex: 1,
         width: '100%',
         borderRadius: 10,
         overflow: 'hidden',
         marginTop: 16,
-      },
-      map: {
+    },
+    map: {
         width: '100%',
         height: '100%',
-      },
-      mapMarker: {
+    },
+    mapMarker: {
         width: 90,
         height: 80,
-      },
-      mapMarkerContainer: {    
+    },
+    mapMarkerContainer: {
         borderWidth: 2,
-        borderColor:'#fff',
+        borderColor: '#fff',
         backgroundColor: '#555',
         flexDirection: 'column',
         borderRadius: 8,
         overflow: 'hidden',
         alignItems: 'center',
-      },
-    
-      mapMarkerImage: {
+    },
+
+    mapMarkerImage: {
         width: 90,
         height: 45,
         resizeMode: 'cover',
-      },
-      mapMarkerTitle: {        
+    },
+    mapMarkerTitle: {
         // flex: 2,
         // fontFamily: 'Roboto_400Regular',
         color: '#fff',
         fontSize: 10,
         lineHeight: 23,
-      },
-      itemsContainer: {
-        flexDirection: 'row',        
+    },
+    itemsContainer: {
+        flexDirection: 'row',
         marginBottom: 32,
-      },
-      item: {
+    },
+    item: {
         margin: 10,
         // borderWidth: 2,
-        borderRadius: 8,    
+        borderRadius: 8,
         padding: 15,
-        justifyContent: 'center',    
+        justifyContent: 'center',
         textAlign: 'center',
         backgroundColor: "#dedede",
         elevation: 1
-      },  
-      selectedItem: {    
+    },
+    selectedItem: {
         // borderWidth: 2,
-        backgroundColor:'#fff',
+        backgroundColor: '#fff',
         borderColor: '#000',
         elevation: 5,
-      },
-      
-      itemTitle: {
+    },
+
+    itemTitle: {
         // fontFamily: 'Roboto_400Regular',
-        alignSelf: 'center',    
+        alignSelf: 'center',
         textAlign: 'center',
         fontSize: 13,
         color: '#555'
-      },
-      icon:{
+    },
+    icon: {
         margin: 5,
         padding: 15,
-        alignSelf: 'center',    
+        alignSelf: 'center',
         color: '#555'
-      },
-      selectedIcon:{
+    },
+    selectedIcon: {
         margin: 5,
         padding: 15,
-        alignSelf: 'center',  
+        alignSelf: 'center',
         color: '#000'
-      },
-      callout: {
+    },
+    callout: {
         width: 260,
-      },
-      devName: {
+    },
+    devName: {
         fontWeight: 'bold',
         fontSize: 16,
-      },
-    
-      devBio: {
+    },
+
+    devBio: {
         color: '#666',
         marginTop: 5,
-      },
-    
-      devTechs: {
+    },
+
+    devTechs: {
         marginTop: 5,
-      },
+    },
 });
 
 
