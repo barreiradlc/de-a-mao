@@ -53,11 +53,13 @@ function ContentDrawer({navigation, route}){
     }
 
     async function handleLogout(){      
-    //   await AsyncStorage.removeItem('@user')      
-
+      await AsyncStorage.removeItem('@user')      
       console.log({navigation})
-
       navigation.navigate('Login')
+    }
+    
+    async function handleMapa(){              
+      navigation.navigate('Mapa')
     }
     
     function handleSoon(){
@@ -85,6 +87,7 @@ function ContentDrawer({navigation, route}){
     return (
       <ScrollView>
         <DrawerItem bg label={`Bem vindo(a) ${user.name}\n \n${user.email}`} handleFunction={() =>  console.log('nada')}  />        
+        <DrawerItem label='Home' icon='home' handleFunction={handleMapa} />
         <DrawerItem label='Perfil' icon='user-circle' handleFunction={handleEditPerfil} />
         <DrawerItem label='Novo Alerta' icon='plus' handleFunction={handleNewAlert} />
 

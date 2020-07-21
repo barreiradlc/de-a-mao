@@ -23,6 +23,7 @@ function Routes(props) {
   
   
   const [user, setUser] = React.useState()
+  const [homePage, setHomePage] = React.useState()
   const [loading, setLoading] = React.useState(true)
   
   React.useEffect(() => {
@@ -33,20 +34,31 @@ function Routes(props) {
     const u = await AsyncStorage.getItem("@user")
     setLoading(false)
     
+    console.log({u})
+
     if(u){
       setUser(JSON.parse(u))
+      return setHomePage('Mapa')
+    } else {
+      return setHomePage('Login')
     }
+
   }
   
-  if(loading){
+  console.log({homePage})
+
+
+  if(loading || !homePage){
     return null
   }
   
-  console.debug('{user}')
-  console.debug({user})
+  // const homePage = user ? "Mapa" : "Login"
   
-  const homePage = user !== null ? "Mapa" : "Login"
+  console.log({homePage})
+
   
+
+
   return (
     <Stack.Navigator initialRouteName={homePage}>
         <Stack.Screen name="Login" component={Home} options={{ headerShown: false }} />        

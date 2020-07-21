@@ -26,7 +26,7 @@ function Home({ navigation }) {
     function handeLogin() {
         if(user === ''){
            return ref_input.current.focus()
-        } 
+        }
 
         
         setShowOverlay(true)
@@ -57,6 +57,9 @@ function Home({ navigation }) {
             console.debug(navigation)
             navigation.replace('Mapa')
 
+        })
+        .catch((e) => {
+            console.error({e})
         })
         
     }
