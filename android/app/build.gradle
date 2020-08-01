@@ -138,8 +138,8 @@ android {
         applicationId "com.komunumo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
-        versionName "0.0.6"
+        versionCode 7
+        versionName "0.0.7"
     }
     splits {
         abi {
@@ -204,7 +204,7 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
     implementation project(':react-native-community-geolocation')
-    
+
     // implementation(project(':react-native-maps')){
     //    exclude group: 'com.google.android.gms', module: 'play-services-base'
     //    exclude group: 'com.google.android.gms', module: 'play-services-maps'
