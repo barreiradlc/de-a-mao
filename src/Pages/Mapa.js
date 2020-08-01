@@ -57,8 +57,9 @@ function Mapa() {
   }, [])
   
   React.useEffect(() => {
-    if(RouteParams){
+    if(RouteParams && position){
       if(RouteParams.refresh){
+        console.log("GET ALERTS ROUTE")
         getAlerts()
       }
     }
@@ -66,7 +67,16 @@ function Mapa() {
   
   React.useEffect(() => {
     if(position){
+      console.log("GET ALERTS")
+
       getAlerts()
+    } else {
+      Geolocation.getCurrentPosition(info => {
+        console.log("INFO")
+        console.log(info)
+        console.log("INFO")
+        setPosition(info.coords)
+      });
     }
   }, [position])
 
@@ -78,6 +88,21 @@ function Mapa() {
 
   
   async function requestPermission (){
+
+
+    console.log("PERM")
+    console.log(PermissionsAndroid.RESULTS.GRANTED)
+    console.log("PERM")
+
+        
+    Geolocation.getCurrentPosition(info  => {
+        console.log('info')
+        console.log(info)
+        console.log('info')        
+      })
+
+
+
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -91,14 +116,29 @@ function Mapa() {
         }
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+
         console.log("Permissão concedida");        
+
+        
+
+        await Geolocation.getCurrentPosition(info => {                    
+          console.log('info')
+          console.log(info)
+          console.log('info')
+          // setPosition(info.coords)
+          // getAlerts()
+        });
+
+
+
+        
+        console.log("Permissão concedida2");        
       } else {
 
         console.log("Permisssão negada");
         return;
       }
         
-      Geolocation.getCurrentPosition(info => {setPosition(info.coords)});
       
       // setPosition({
       //   latitude: a.coords.latitude,
@@ -124,29 +164,40 @@ function Mapa() {
       )
     })
     requestPermission()
-      .then(( ) => {
-        getAlerts()
-      })
     getUser()    
   }
 
   function getAlerts(){
-    console.log({position})
-
-    api.get(`alerts?latitude=${position.latitude}&longitude=${position.longitude}&needs=${needSelected.length > 0 ? needSelected : ALL_NEEDS}`, { user }).then(res => {
-
-      console.log(res.data)
-      setShowOverlay(false)
-      setAlerts(res.data)  
-      navigation.setOptions({
-        title: `${res.data.length} Alertas ao seu alcance` 
+    if(!position){
+      Geolocation.getCurrentPosition(info => {
+        console.log("INFO")
+        console.log(info)
+        console.log("INFO")
+        setPosition(info.coords)
+      });
+    } else {
+      console.log({position})
+      api.get(`alerts?latitude=${position.latitude}&longitude=${position.longitude}&needs=${needSelected.length > 0 ? needSelected : ALL_NEEDS}`, { user }).then(res => {
+        console.log(res.data)
+        setShowOverlay(false)
+        setAlerts(res.data)  
+        navigation.setOptions({
+          title: `${res.data.length} Alerta${res.data.length !== 1 ? 's' : ''} ao seu alcance` 
+        })        
       })
-    })
+    }
   }
 
   async function getUser(){
     const u = await AsyncStorage.getItem("@user")
-    setUser(JSON.parse(u.user.name))
+
+    const parserDUser = JSON.parse(u)
+
+    console.debug('u')
+    console.debug(parserDUser)
+    console.debug('u')
+
+    setUser(parserDUser.username)
 
     
   }
@@ -283,7 +334,12 @@ function Mapa() {
           <ActivityIndicator />
         }
       </View>
+      
+      <Text style={{ fontWeight: 'bold', fontSize: 16, marginTop: 5 }}>Posso ajudar com:</Text>
+
       <View style={styles.itemsContainer}>
+
+
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -359,11 +415,12 @@ const styles = StyleSheet.create({
   },
   itemsContainer: {
     flexDirection: 'row',
-    marginTop: 16,
+    marginTop: 5,
     marginBottom: 32,
   },
   item: {
-    margin: 10,
+    marginVertical: 10,
+    marginRight: 20,
     // borderWidth: 2,
     borderRadius: 8,    
     padding: 15,

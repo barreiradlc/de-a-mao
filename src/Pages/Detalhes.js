@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
         marginTop: 32,
     },
     pointName: {
-        color: '#322153',
+        color: '#555',
         fontSize: 20,
         fontFamily: 'Ubuntu_700Bold',
         marginTop: 18,
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 24,
         marginTop: 8,
-        color: '#6C6C80'
+        color: '#555',
     },
 
     address: {
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     },
 
     addressTitle: {
-        color: '#322153',
+        color: '#555',
         fontFamily: 'Roboto_500Medium',
         fontSize: 16,
     },
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto_400Regular',
         lineHeight: 24,
         marginTop: 8,
-        color: '#6C6C80'
+        color: '#555',
     },
 
     footer: {

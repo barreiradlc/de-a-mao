@@ -259,7 +259,7 @@ function FormAlerta({ navigation, route }) {
 
     return (
 
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
 
             {showOverlay &&
                 <LoadingOverlay />
@@ -323,16 +323,16 @@ function FormAlerta({ navigation, route }) {
                 </>
             )}
 
-        </View>
+        </ScrollView>
     );
 }
 
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
+    container: {        
         paddingHorizontal: 32,
         paddingTop: 20
+        
     },
     title: {
         fontWeight: 'bold',
@@ -388,7 +388,8 @@ const styles = StyleSheet.create({
         marginBottom: 32,
     },
     item: {
-        margin: 10,
+        marginTop: 10,
+        marginRight: 20,
         // borderWidth: 2,
         borderRadius: 8,
         padding: 15,

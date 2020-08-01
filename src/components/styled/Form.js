@@ -54,7 +54,8 @@ export const FormButtonGroup = styled.View`
   alignItems: stretch
   flex-direction: row
   justifyContent: space-between
-  marginVertical: 20px
+  marginTop: 20px
+  marginBottom: 30px
 `
 
 export const FormErrorGroup = styled.View`
