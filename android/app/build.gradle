@@ -135,11 +135,13 @@ android {
     }
 
     defaultConfig {
+        multiDexEnabled true
+
         applicationId "com.komunumo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7
-        versionName "0.0.7"
+        versionCode 9
+        versionName "0.0.9"
     }
     splits {
         abi {
@@ -203,7 +205,7 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
-    implementation project(':react-native-community-geolocation')
+    
 
     // implementation(project(':react-native-maps')){
     //    exclude group: 'com.google.android.gms', module: 'play-services-base'

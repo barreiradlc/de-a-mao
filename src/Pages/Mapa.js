@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable prettier/prettier */
 import * as React from 'react';
-import { TouchableOpacity, ScrollView, ActivityIndicator,Alert,Text, StyleSheet, Button, TextInput, View, PermissionsAndroid } from 'react-native';
+import { TouchableOpacity, ScrollView, ActivityIndicator,Alert,Text, StyleSheet, Button, TextInput, View, PermissionsAndroid, Image } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -163,8 +163,11 @@ function Mapa() {
         </TouchableOpacity>
       )
     })
-    requestPermission()
     getUser()    
+    requestPermission()
+      .then(() => {
+        getAlerts()
+      })
   }
 
   function getAlerts(){
@@ -263,29 +266,52 @@ function Mapa() {
     return item.join(', ')
   }
 
-  if(!position){    
-    return null
-  }
 
+  console.log({position})
+
+  
   function handleOpenDrawer(){
-
+    
     console.log('DRAWER')
     console.log(navigation)
     console.log('DRAWER')
-
+    
     navigation.openDrawer()
   }
-
+  
   function  handleGoToDetails(e){
     console.debug('e')
     console.debug({e})
     console.debug('e')
-
+    
     navigation.navigate('Alerta', e)
+  }
+
+  if(!position){    
+    return null
   }
 
   return (
     <View style={styles.container}>
+
+        <Text style={{ fontWeight: 'bold', fontSize: 16, marginTop: 5 }}>Posso ajudar com:</Text>
+
+      <View style={styles.itemsContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >        
+
+          <ItemNecessidade necessidade="COMPRAS" icone='shopping-basket' pkg="fa"  msg="Compras" />
+
+          <ItemNecessidade necessidade="HIGIENE" icone='shower' pkg="fa"  msg="Higiene" />
+
+          <ItemNecessidade necessidade="MANTIMENTOS" icone='fridge' pkg="mi"  msg="Mantimentos" />
+          
+        </ScrollView>
+      </View>
+
+
       
       <View style={styles.mapContainer}>
         {position ?
@@ -312,8 +338,9 @@ function Mapa() {
                 }}
                 >
               <View style={styles.mapMarkerContainer} >
+                {/* <Image source={require=('../assets/logo.png')} style={styles.img} height={20} width={20} /> */}
                 <Icon name="handshake-o" size={25} color="#fff" style={{ marginVertical: 15 }}/>
-                </View>
+              </View>
 
               <Callout
                 onPress={() => handleGoToDetails(a)}
@@ -335,24 +362,8 @@ function Mapa() {
         }
       </View>
       
-      <Text style={{ fontWeight: 'bold', fontSize: 16, marginTop: 5 }}>Posso ajudar com:</Text>
+    
 
-      <View style={styles.itemsContainer}>
-
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        >        
-
-          <ItemNecessidade necessidade="COMPRAS" icone='shopping-basket' pkg="fa"  msg="Compras" />
-
-          <ItemNecessidade necessidade="HIGIENE" icone='shower' pkg="fa"  msg="Higiene" />
-
-          <ItemNecessidade necessidade="MANTIMENTOS" icone='fridge' pkg="mi"  msg="Mantimentos" />
-          
-        </ScrollView>
-      </View>
     </View>
   );
 }
@@ -394,7 +405,7 @@ const styles = StyleSheet.create({
   mapMarkerContainer: {    
     borderWidth: 2,
     borderColor:'#fff',
-    backgroundColor: '#555',
+    backgroundColor: '#dedede',
     flexDirection: 'column',
     borderRadius: 8,
     overflow: 'hidden',
@@ -415,8 +426,7 @@ const styles = StyleSheet.create({
   },
   itemsContainer: {
     flexDirection: 'row',
-    marginTop: 5,
-    marginBottom: 32,
+    marginTop: 5,    
   },
   item: {
     marginVertical: 10,
@@ -471,6 +481,11 @@ const styles = StyleSheet.create({
   devTechs: {
     marginTop: 5,
   },
+  img: {
+
+    width: 60,
+    height: 60,
+  }
 
 });
 
